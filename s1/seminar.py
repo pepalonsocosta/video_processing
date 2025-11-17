@@ -1,3 +1,5 @@
+import subprocess
+
 class Converter:
 
     @staticmethod
@@ -25,6 +27,14 @@ class Converter:
 
         return r, g, b
 
+    @staticmethod
+    def resize_image(image_path, width, height):
+
+        output_path = 'resized_image.jpeg'
+
+        cmd = ['ffmpeg', '-i', str(image_path), '-vf', f'scale={width}:{height}', str(output_path)]
+        subprocess.run(cmd, check=True)
+        return
 
 r, g, b = 120, 200, 80
 y, u, v = Converter.rgb_to_yuv(r, g, b)
@@ -32,3 +42,5 @@ print("YUV:", y, u, v)
 
 r2, g2, b2 = Converter.yuv_to_rgb(y, u, v)
 print("RGB:", r2, g2, b2)
+
+output_image = Converter.resize_image('./image_to_resize.jpeg', 320, 240)
