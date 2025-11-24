@@ -1,3 +1,5 @@
+import subprocess
+
 class Seminar1:
 
     @staticmethod
@@ -25,6 +27,14 @@ class Seminar1:
 
         return r, g, b
 
+    @staticmethod
+    def reduce_quality(image_path, output_path,compression_factor):
+        
+        cmd = ['ffmpeg', '-y', '-i', str(image_path), '-q:v', str(compression_factor), str(output_path)]
+        subprocess.run(cmd)
+        
+        return output_path
+
 
 # ex-2
 
@@ -35,3 +45,7 @@ print("YUV:", y, u, v)
 r2, g2, b2 = Seminar1.yuv_to_rgb(y, u, v)
 print("RGB:", r2, g2, b2)
 
+
+# ex-3
+output_image = Seminar1.reduce_quality('./image_to_resize.jpg', 'compressed_image.jpg', 32)
+print("Compressed image saved to:", output_image)
