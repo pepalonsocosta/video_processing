@@ -90,3 +90,7 @@ For the image we chose we got the following results:
 For this next exercise we have implemented a function that will loop trough the bytes and will detect if a byte is repeated and if so it will print it on this format: `(number of repeats, value)`
 
 To try it out we got the first 30 bytes from the image and we runned out function with those bytes
+
+## ex-6
+
+We implemented the [DCT Class](s1/dct_class.py), following the formulas on the slides, we implemened a encose method and a decode method wich are inverses one of the other. To run the file you can do `bash uv run s1/dct_class.py`
