@@ -114,6 +114,9 @@ class Seminar1:
     @staticmethod
     def run_lenght_encoding(input_bytes):
         
+        if len(input_bytes) == 0:
+            return []
+        
         encoded = []
         count = 1
         
@@ -138,31 +141,31 @@ class Seminar1:
         return encoded
 
 
+if __name__ == "__main__":
+    # ex-2
+    r, g, b = 120, 200, 80
+    y, u, v = Seminar1.rgb_to_yuv(r, g, b)
+    print("YUV:", y, u, v)
 
-# ex-2
-r, g, b = 120, 200, 80
-y, u, v = Seminar1.rgb_to_yuv(r, g, b)
-print("YUV:", y, u, v)
+    r2, g2, b2 = Seminar1.yuv_to_rgb(y, u, v)
+    print("RGB:", r2, g2, b2)
 
-r2, g2, b2 = Seminar1.yuv_to_rgb(y, u, v)
-print("RGB:", r2, g2, b2)
+    # ex-3
+    output_image = Seminar1.reduce_quality('./image_to_resize.jpg', 'compressed_image.jpg', 32)
+    print("Compressed image saved to:", output_image)
 
-# ex-3
-output_image = Seminar1.reduce_quality('./image_to_resize.jpg', 'compressed_image.jpg', 32)
-print("Compressed image saved to:", output_image)
+    # ex-4: Test serpentine method with a JPEG file
+    jpeg_file = './image_to_resize.jpg'
+    zigzag_bytes = Seminar1.serpentine(jpeg_file)
+    print(f"\nSerpentine scanning applied to {jpeg_file}")
+    print("Compressed file size:", len(zigzag_bytes))
 
-# ex-4: Test serpentine method with a JPEG file
-jpeg_file = './image_to_resize.jpg'
-zigzag_bytes = Seminar1.serpentine(jpeg_file)
-print(f"\nSerpentine scanning applied to {jpeg_file}")
-print("Compressed file size:", len(zigzag_bytes))
+    # ex-5
+    bw_image = Seminar1.convert_to_bw_max_compression('./image_to_resize.jpg', 'bw_max_compressed.jpg')
+    print("B/W compressed image saved to:", bw_image)
 
-# ex-5
-bw_image = Seminar1.convert_to_bw_max_compression('./image_to_resize.jpg', 'bw_max_compressed.jpg')
-print("B/W compressed image saved to:", bw_image)
-
-# ex-5.2
-with open(jpeg_file, 'rb') as f:
-    input_bytes = bytearray(f.read())
-encoded_bytes = Seminar1.run_lenght_encoding(input_bytes)
-print(f"First 30 encoded bytes: {encoded_bytes[:30]}")
+    # ex-5.2
+    with open(jpeg_file, 'rb') as f:
+        input_bytes = bytearray(f.read())
+    encoded_bytes = Seminar1.run_lenght_encoding(input_bytes)
+    print(f"First 30 encoded bytes: {encoded_bytes[:30]}")

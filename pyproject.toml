@@ -7,4 +7,6 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.3.5",
     "pywavelets>=1.9.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]

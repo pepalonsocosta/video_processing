@@ -98,3 +98,23 @@ We implemented the [DCT Class](s1/dct_class.py), following the formulas on the s
 ## ex-7
 
 We implemented the [DWT Class](s1/dwt_class.py) using PyWavelets library. It includes `encode` and `decode` methods that are inverses of each other. DWT decomposes images into 4 sub-bands (LL, LH, HL, HH) representing approximation and detail coefficients. To run: `uv run s1/dwt_class.py`
+
+## Testing
+
+Using AI, we included tests for the methods of the classes we implemented. To see how the tests are passing on the repo itself, we added a GitHub Action that runs the tests on every push to main. The results can be seen here:
+
+![Tests](https://github.com/pepalonsocosta/video_processing/actions/workflows/tests.yml/badge.svg)
+
+### Running Tests Locally
+
+```bash
+# Run all tests
+uv run pytest
+
+```
+
+### Test Coverage
+
+- **DCT Class**: Tests for encode/decode methods, round-trip accuracy, edge cases
+- **DWT Class**: Tests for sub-band structure, shape verification, round-trip accuracy
+- **Seminar1 Class**: Tests for RGB/YUV conversion, serpentine pattern, run-length encoding, FFMPEG operations
