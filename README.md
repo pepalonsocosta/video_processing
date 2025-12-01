@@ -94,3 +94,7 @@ To try it out we got the first 30 bytes from the image and we runned out functio
 ## ex-6
 
 We implemented the [DCT Class](s1/dct_class.py), following the formulas on the slides, we implemened a encose method and a decode method wich are inverses one of the other. To run the file you can do `bash uv run s1/dct_class.py`
+
+## ex-7
+
+We implemented the [DWT Class](s1/dwt_class.py) using PyWavelets library. It includes `encode` and `decode` methods that are inverses of each other. DWT decomposes images into 4 sub-bands (LL, LH, HL, HH) representing approximation and detail coefficients. To run: `uv run s1/dwt_class.py`
