@@ -111,6 +111,34 @@ class Seminar1:
         
         return output_path
 
+    @staticmethod
+    def run_lenght_encoding(input_bytes):
+        
+        encoded = []
+        count = 1
+        
+        for i in range(1, len(input_bytes)):
+            if input_bytes[i] == input_bytes[i-1]:
+                count += 1
+            else:
+                # If count > 1, it's a run - encode as tuple
+                # If count == 1, it's a single value - add as number
+                if count > 1:
+                    encoded.append((count, input_bytes[i-1]))
+                else:
+                    encoded.append(input_bytes[i-1])
+                count = 1
+        
+        # Handle the last byte
+        if count > 1:
+            encoded.append((count, input_bytes[-1]))
+        else:
+            encoded.append(input_bytes[-1])
+        
+        return encoded
+
+
+
 # ex-2
 r, g, b = 120, 200, 80
 y, u, v = Seminar1.rgb_to_yuv(r, g, b)
@@ -132,3 +160,9 @@ print("Compressed file size:", len(zigzag_bytes))
 # ex-5
 bw_image = Seminar1.convert_to_bw_max_compression('./image_to_resize.jpg', 'bw_max_compressed.jpg')
 print("B/W compressed image saved to:", bw_image)
+
+# ex-5.2
+with open(jpeg_file, 'rb') as f:
+    input_bytes = bytearray(f.read())
+encoded_bytes = Seminar1.run_lenght_encoding(input_bytes)
+print(f"First 30 encoded bytes: {encoded_bytes[:30]}")

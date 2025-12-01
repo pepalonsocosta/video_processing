@@ -84,3 +84,9 @@ For the image we chose we got the following results:
 - The conversion to grayscale combined with maximum compression resulted in significant file size reduction
 
 ![ex2](./s1/bw_max_compressed.jpg)
+
+## ex-5.2
+
+For this next exercise we have implemented a function that will loop trough the bytes and will detect if a byte is repeated and if so it will print it on this format: `(number of repeats, value)`
+
+To try it out we got the first 30 bytes from the image and we runned out function with those bytes
