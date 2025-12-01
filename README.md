@@ -62,3 +62,25 @@ The implementation includes:
 - `serpentine(jpeg_path)`: Main method that reads the JPEG file and applies the zigzag scanning pattern
 
 When running the script, it processes the image file and outputs the total bytes processed and the number of 8x8 blocks.
+
+## ex-5
+
+For this exercise we investigated how to transform an image into black and white (grayscale) and apply the hardest compression possible.
+
+We ended up using the `-vf format=gray` filter to convert to grayscale and the `-q:v 31` factor for maximum compression.
+
+the full command we used is
+
+```bash
+ffmpeg -i image_to_resize.jpg -vf format=gray -q:v 31 bw_max_compressed.jpg
+```
+
+For the method we basically created a wrapper around this command, where we pass an image file path and an output path.
+
+For the image we chose we got the following results:
+
+- Original image: 212 KB
+- B/W compressed image: 33 KB
+- The conversion to grayscale combined with maximum compression resulted in significant file size reduction
+
+![ex2](./s1/bw_max_compressed.jpg)

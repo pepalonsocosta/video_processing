@@ -103,6 +103,13 @@ class Seminar1:
         
         return result
 
+    @staticmethod
+    def convert_to_bw_max_compression(image_path, output_path):
+        
+        cmd = ['ffmpeg', '-y', '-i', str(image_path), '-vf', 'format=gray', '-q:v', '31', str(output_path)]
+        subprocess.run(cmd)
+        
+        return output_path
 
 # ex-2
 r, g, b = 120, 200, 80
@@ -121,3 +128,7 @@ jpeg_file = './image_to_resize.jpg'
 zigzag_bytes = Seminar1.serpentine(jpeg_file)
 print(f"\nSerpentine scanning applied to {jpeg_file}")
 print("Compressed file size:", len(zigzag_bytes))
+
+# ex-5
+bw_image = Seminar1.convert_to_bw_max_compression('./image_to_resize.jpg', 'bw_max_compressed.jpg')
+print("B/W compressed image saved to:", bw_image)
