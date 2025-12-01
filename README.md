@@ -47,3 +47,18 @@ For the two images we chose we got the following results for a compression facto
 
 ![ex2](./s1/image_to_resize.jpg)
 ![ex2](./s1/compressed_image.jpg)
+
+## ex-4
+
+For this exercise we implemented the `serpentine` method, which reads bytes from a JPEG file and applies the serpentine (zigzag) scanning pattern used in JPEG compression.
+
+The method processes the file in 8x8 blocks (64 bytes each) and applies the zigzag pattern to convert the 2D matrix into a linear sequence. This pattern is used in JPEG compression after DCT and quantization to group high-frequency components together, making them more efficient for run-length encoding.
+
+We created a helper method ( private ) for clarity `_generate_zigzag_indices`
+
+The implementation includes:
+
+- `_generate_zigzag_indices()`: Helper method that generates the zigzag scan pattern for an 8x8 matrix
+- `serpentine(jpeg_path)`: Main method that reads the JPEG file and applies the zigzag scanning pattern
+
+When running the script, it processes the image file and outputs the total bytes processed and the number of 8x8 blocks.

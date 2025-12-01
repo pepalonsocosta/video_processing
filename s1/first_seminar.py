@@ -35,9 +35,76 @@ class Seminar1:
         
         return output_path
 
+    @staticmethod
+    def _generate_zigzag_indices(size=8):
+
+        indices = []
+        row, col = 0, 0
+        direction = 1  # 1 for up-right, -1 for down-left
+        
+        for i in range(size * size):
+            indices.append((row, col))
+            
+            if direction == 1:  # Moving up-right
+                if col == size - 1:
+                    row += 1
+                    direction = -1
+                elif row == 0:
+                    col += 1
+                    direction = -1
+                else:
+                    row -= 1
+                    col += 1
+            else:  # Moving down-left
+                if row == size - 1:
+                    col += 1
+                    direction = 1
+                elif col == 0:
+                    row += 1
+                    direction = 1
+                else:
+                    row += 1
+                    col -= 1
+        
+        return indices
+
+    @staticmethod
+    def serpentine(jpeg_path):
+        with open(jpeg_path, 'rb') as f:
+            file_bytes = bytearray(f.read())
+        
+        # Generate zigzag indices for 8x8 block
+        zigzag_indices = Seminar1._generate_zigzag_indices(8)
+        
+        # Process bytes in 8x8 blocks
+        block_size = 8 * 8  # 64 bytes per block
+        result = []
+        
+        # Process the file in 8x8 blocks
+        for block_start in range(0, len(file_bytes), block_size):
+            block = file_bytes[block_start:block_start + block_size]
+            
+            # If block is smaller than 64 bytes, pad with zeros
+            if len(block) < block_size:
+                block.extend([0] * (block_size - len(block)))
+            
+            # Create 8x8 matrix from block
+            matrix = [[0] * 8 for _ in range(8)]
+            for i in range(8):
+                for j in range(8):
+                    matrix[i][j] = block[i * 8 + j]
+            
+            # Apply zigzag scanning to get linear sequence
+            zigzag_sequence = []
+            for row, col in zigzag_indices:
+                zigzag_sequence.append(matrix[row][col])
+            
+            result.extend(zigzag_sequence)
+        
+        return result
+
 
 # ex-2
-
 r, g, b = 120, 200, 80
 y, u, v = Seminar1.rgb_to_yuv(r, g, b)
 print("YUV:", y, u, v)
@@ -45,7 +112,12 @@ print("YUV:", y, u, v)
 r2, g2, b2 = Seminar1.yuv_to_rgb(y, u, v)
 print("RGB:", r2, g2, b2)
 
-
 # ex-3
 output_image = Seminar1.reduce_quality('./image_to_resize.jpg', 'compressed_image.jpg', 32)
 print("Compressed image saved to:", output_image)
+
+# ex-4: Test serpentine method with a JPEG file
+jpeg_file = './image_to_resize.jpg'
+zigzag_bytes = Seminar1.serpentine(jpeg_file)
+print(f"\nSerpentine scanning applied to {jpeg_file}")
+print("Compressed file size:", len(zigzag_bytes))
