@@ -9,6 +9,7 @@ WORKDIR /app
 # Copy project files
 COPY pyproject.toml ./
 COPY main.py ./
+COPY app/ ./app/
 
 # Install dependencies with uv (installs from pyproject.toml)
 RUN uv pip install --system --no-cache .
