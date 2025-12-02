@@ -1,4 +1,5 @@
 import subprocess
+from app.docker_utils import run_ffmpeg_in_container
 
 class Seminar1:
 
@@ -29,9 +30,11 @@ class Seminar1:
 
     @staticmethod
     def reduce_quality(image_path, output_path, compression_factor):
+        shared_input = f"/shared/{image_path}"
+        shared_output = f"/shared/{output_path}"
         
-        cmd = ['ffmpeg', '-y', '-i', str(image_path), '-q:v', str(compression_factor), str(output_path)]
-        subprocess.run(cmd)
+        ffmpeg_args = ['-y', '-i', shared_input, '-q:v', str(compression_factor), shared_output]
+        run_ffmpeg_in_container(ffmpeg_args)
         
         return output_path
 
@@ -105,9 +108,11 @@ class Seminar1:
 
     @staticmethod
     def convert_to_bw_max_compression(image_path, output_path):
+        shared_input = f"/shared/{image_path}"
+        shared_output = f"/shared/{output_path}"
         
-        cmd = ['ffmpeg', '-y', '-i', str(image_path), '-vf', 'format=gray', '-q:v', '31', str(output_path)]
-        subprocess.run(cmd)
+        ffmpeg_args = ['-y', '-i', shared_input, '-vf', 'format=gray', '-q:v', '31', shared_output]
+        run_ffmpeg_in_container(ffmpeg_args)
         
         return output_path
 

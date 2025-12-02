@@ -1,7 +1,8 @@
 FROM python:3.12-slim
 
-# Install uv
+# Install uv and docker client
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+RUN apt-get update && apt-get install -y docker.io && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
