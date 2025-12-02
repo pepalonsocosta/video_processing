@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: practice1-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./shared:/app/shared
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - ffmpeg
+
+  ffmpeg:
+    build:
+      context: ./ffmpeg
+      dockerfile: Dockerfile
+    container_name: practice1-ffmpeg-1
+    volumes:
+      - ./shared:/shared
+    command: tail -f /dev/null
