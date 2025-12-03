@@ -1,0 +1,27 @@
+services:
+  # Gateway - Entry point
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: seminar2-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./shared:/app/shared
+    # To ensure the API starts after the services it depends on are ready
+    depends_on:
+      - video-resolution
+
+  # Exercise 1 - Video Resolution
+  video-resolution:
+    build:
+      context: ./services/video-resolution
+      dockerfile: ../Dockerfile
+    container_name: exercise1-video-resolution
+    volumes:
+      - ./shared:/app/shared
+
+volumes:
+  shared:
+    driver: local

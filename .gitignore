@@ -18,3 +18,6 @@ htmlcov/
 .tox/
 *.cover
 .hypothesis/
+
+big_buck_bunny.mp4
+resized_output.mp4
