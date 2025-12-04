@@ -18,6 +18,7 @@ EXERCISE_3_URL = "http://video-info:8000"
 EXERCISE_4_URL = "http://video-audio:8000"
 EXERCISE_5_URL = "http://video-tracks:8000"
 EXERCISE_6_URL = "http://video-macroblocks:8000"
+EXERCISE_7_URL = "http://video-yuv-histogram:8000"
 SHARED_DIR = "/app/shared"
 
 @app.get("/health")
@@ -306,6 +307,58 @@ async def visualize_macroblocks_mv(
         async with httpx.AsyncClient() as client:
             response = await client.post(
                 f"{EXERCISE_6_URL}/process",
+                json={
+                    "video_path": unique_filename
+                },
+                timeout=300.0
+            )
+            response.raise_for_status()
+            result = response.json()
+            
+            # Return the processed file
+            output_path = os.path.join(SHARED_DIR, result["output_path"])
+            if os.path.exists(output_path):
+                return FileResponse(
+                    path=output_path,
+                    filename=result["output_path"],
+                    media_type="video/mp4"
+                )
+            else:
+                raise HTTPException(status_code=500, detail="Output file not found")
+                
+    except Exception as e:
+        if os.path.exists(input_path):
+            os.remove(input_path)
+        raise HTTPException(status_code=500, detail=f"Error processing video")
+
+@app.post("/api/video/yuv-histogram")
+async def visualize_yuv_histogram(
+    file: UploadFile = File(...)
+):
+    """
+    Create a video output showing YUV histogram.
+    Uses FFmpeg histogram filter to visualize Y (luma), U (Cb), and V (Cr) component histograms.
+    """
+    # Get file extension and generate a unique filename
+    file_ext = os.path.splitext(file.filename)[1] if file.filename else ".mp4"
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    input_path = os.path.join(SHARED_DIR, unique_filename)
+
+    # Create shared directory if it doesn't exist
+    os.makedirs(SHARED_DIR, exist_ok=True)
+
+    # Save uploaded file to shared volume
+    try:
+        with open(input_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file")
+    
+    # Call video-yuv-histogram service
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{EXERCISE_7_URL}/process",
                 json={
                     "video_path": unique_filename
                 },

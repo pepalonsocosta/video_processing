@@ -17,6 +17,7 @@ services:
       - video-audio
       - video-tracks
       - video-macroblocks
+      - video-yuv-histogram
 
   # Exercise 1 - Video Resolution
   video-resolution:
@@ -69,6 +70,15 @@ services:
       context: ./services/video-macroblocks
       dockerfile: ../Dockerfile
     container_name: exercise6-video-macroblocks
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 7 - YUV Histogram
+  video-yuv-histogram:
+    build:
+      context: ./services/video-yuv-histogram
+      dockerfile: ../Dockerfile
+    container_name: exercise7-video-yuv-histogram
     volumes:
       - ./shared:/app/shared
 

@@ -196,3 +196,23 @@ seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/macroblock
 ```
 
 From this output we can see how the video has been processed to visualize macroblocks and motion vectors. The output video shows the internal structure of the video encoding, displaying motion vectors as arrows and macroblock boundaries, which is useful for understanding video compression and motion estimation algorithms.
+
+## Exercise 7
+
+For the seventh service we are implementing we need to create a video output that shows the YUV histogram. For it we are using FFmpeg's histogram filter to visualize the distribution of Y (luminance), U (blue-difference), and V (red-difference) components.
+
+This service overlays YUV histograms on the video frames, showing the distribution of each color component. This is useful for analyzing color distribution, exposure, and color grading in video.
+
+To run it we used curl in this way (using the same Big Buck Bunny file):
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/yuv-histogram" \
+  -F "file=@big_buck_bunny.mp4" \
+  --output output_yuv_histogram.mp4
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 29.2M  100  290k  100 29.2M   123k  12.4M  0:00:02  0:00:02 --:--:-- 12.5M
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see how the video has been processed to visualize YUV histograms. The output video shows histograms overlaid on the video frames, displaying the distribution of Y (luminance), U (blue-difference chroma), and V (red-difference chroma) components. This visualization is useful for understanding color distribution, analyzing exposure levels, and performing color grading analysis in video processing.
