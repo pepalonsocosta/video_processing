@@ -12,6 +12,7 @@ services:
     # To ensure the API starts after the services it depends on are ready
     depends_on:
       - video-resolution
+      - video-chroma
 
   # Exercise 1 - Video Resolution
   video-resolution:
@@ -19,6 +20,15 @@ services:
       context: ./services/video-resolution
       dockerfile: ../Dockerfile
     container_name: exercise1-video-resolution
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 2 - Chroma Subsampling
+  video-chroma:
+    build:
+      context: ./services/video-chroma
+      dockerfile: ../Dockerfile
+    container_name: exercise2-video-chroma
     volumes:
       - ./shared:/app/shared
 

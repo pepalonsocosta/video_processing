@@ -55,3 +55,24 @@ seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/resolution
 ```
 
 From this output we can see how big was the file and how it has been corectly rezised to low resolution in 2s, also works well with other resolutions
+
+## Exersice 2
+
+For the second service we are implementing we need to modify the chroma subsampling of the input video. For it we are using the following ffmpeg command with the `-pix_fmt` option to change the chroma subsampling format.
+
+This service is getting the request from the api, and running the ffmpeg command with the input and output files that are in the shared container. We support various chroma formats like yuv420p (4:2:0), yuv422p (4:2:2), yuv444p (4:4:4), and their 10-bit variants.
+
+To run it we used curl in this way (using the same Big Buck Bunny file):
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/chroma" \
+  -F "file=@Big_Buck_Bunny_360_10s_30MB.mp4" \
+  -F "chroma_format=yuv422p" \
+  --output chroma_output.mp4
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 30.5M  100 15.2M  100 29.2M   1024k  11.3M  0:00:28  0:00:28 --:--:-- 11.8M
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see how the file has been processed to change the chroma subsampling format, which affects the color information compression and quality of the video. Different chroma formats offer different trade-offs between file size and color quality.
