@@ -76,3 +76,35 @@ seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/chroma" \
 ```
 
 From this output we can see how the file has been processed to change the chroma subsampling format, which affects the color information compression and quality of the video. Different chroma formats offer different trade-offs between file size and color quality.
+
+## Exersice 3
+
+For the third service we are implementing we need to read the video info and print at least 5 relevant data from the video. For it we are using FFprobe, which comes with FFmpeg, to extract video metadata in JSON format.
+
+This service is getting the request from the api, and running the ffprobe command with the input file that is in the shared container. We extract 7 relevant data points including duration, resolution (width and height), frame rate, codec name, bitrate and file size.
+
+To run it we used curl in this way (using the same Big Buck Bunny file):
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/info" \
+  -F "file=@Big_Buck_Bunny_360_10s_30MB.mp4" \
+  | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 30.5M  100   456  100 29.2M    456  11.3M  0:00:02  0:00:02 --:--:-- 11.8M
+{
+  "status": "success",
+  "video_info": {
+    "duration": 10.0,
+    "width": 640,
+    "height": 360,
+    "frame_rate": 30.0,
+    "codec_name": "h264",
+    "bitrate": 24000000,
+    "size_mb": 30.5
+  }
+}
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see how the video information has been extracted successfully, showing all the relevant metadata about the video file including its duration, dimensions, frame rate, codec, bitrate, and file size. This information is useful for understanding video properties before processing or for quality analysis.

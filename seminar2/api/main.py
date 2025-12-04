@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import httpx
 import os
 import shutil
@@ -14,6 +14,7 @@ app = FastAPI(
 # Service URLs (from docker-compose)
 EXERCISE_1_URL = "http://video-resolution:8000"
 EXERCISE_2_URL = "http://video-chroma:8000"
+EXERCISE_3_URL = "http://video-info:8000"
 SHARED_DIR = "/app/shared"
 
 @app.get("/health")
@@ -131,3 +132,46 @@ async def change_chroma_subsampling(
             os.remove(input_path)
         raise HTTPException(status_code=500, detail=f"Error processing video")
 
+@app.post("/api/video/info")
+async def get_video_info(
+    file: UploadFile = File(...)
+):
+    """
+    Get video information and return at least 5 relevant data points.
+    Returns JSON with video metadata including duration, resolution, frame rate, codec, bitrate, etc.
+    """
+    # Get file extension and generate a unique filename
+    file_ext = os.path.splitext(file.filename)[1] if file.filename else ".mp4"
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    input_path = os.path.join(SHARED_DIR, unique_filename)
+
+    # Create shared directory if it doesn't exist
+    os.makedirs(SHARED_DIR, exist_ok=True)
+
+    # Save uploaded file to shared volume
+    try:
+        with open(input_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file")
+    
+    # Call video-info service
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{EXERCISE_3_URL}/process",
+                json={
+                    "video_path": unique_filename
+                },
+                timeout=300.0
+            )
+            response.raise_for_status()
+            result = response.json()
+            
+            # Return the video info as JSON
+            return JSONResponse(content=result)
+                
+    except Exception as e:
+        if os.path.exists(input_path):
+            os.remove(input_path)
+        raise HTTPException(status_code=500, detail=f"Error getting video info")
