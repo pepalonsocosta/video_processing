@@ -108,3 +108,91 @@ seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/info" \
 ```
 
 From this output we can see how the video information has been extracted successfully, showing all the relevant metadata about the video file including its duration, dimensions, frame rate, codec, bitrate, and file size. This information is useful for understanding video properties before processing or for quality analysis.
+
+## Exercise 4
+
+For the fourth service we are implementing we need to create a BBB container with multiple audio tracks. The service cuts the video to 5 seconds and creates three audio tracks: an AAC mono track, an AAC stereo track with lower bitrate, and an AC3 codec track. All tracks are packaged in a single MP4 file.
+
+We tryed out as follows, actually we had to download a new bbb file bcouse the one we had did not have audio tracks
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/bbb-container" \
+  -F "file=@bbb_with_audio.mp4" \
+  --output bbb_multiaudio.mp4
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  151M  100  979k  100  150M   401k  61.8M  0:00:02  0:00:02 --:--:-- 62.2M
+➜  seminar2 git:(main) ✗
+```
+
+## Exercise 5
+
+For the fifth service we are implementing we need to read tracks from an MP4 container and return how many tracks it contains. For it we are using FFprobe to extract stream information in JSON format and then count tracks by type.
+
+This service analyzes the video file and returns a breakdown of tracks by type: video tracks, audio tracks, subtitle tracks, and other tracks, along with the total count.
+
+To run it we used curl in this way (using the same Big Buck Bunny file):
+
+```bash
+seminar2  seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/tracks" \
+  -F "file=@big_buck_bunny.mp4" \
+  | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 29.2M  100   162  100 29.2M    323  58.4M --:--:-- --:--:-- --:--:-- 58.4M
+{
+  "status": "success",
+  "filename": "8d5465d4-028a-442f-b635-3e1f89814fe8.mp4",
+  "total_tracks": 1,
+  "video_tracks": 1,
+  "audio_tracks": 0,
+  "subtitle_tracks": 0,
+  "other_tracks": 0
+}
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see how the video tracks have been analyzed successfully. The response shows the total number of tracks and a breakdown by type, which is useful for understanding the structure of video containers and verifying that multiple tracks.
+
+We can also test exercise 5 using the output from exercise 4 to verify that the multi-audio container was created correctly:
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/tracks" \
+  -F "file=@bbb_multiaudio.mp4" \
+  | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  980k  100   162  100  980k    323  58.4M --:--:-- --:--:-- --:--:-- 58.4M
+{
+  "status": "success",
+  "filename": "0ed1c52f-7fa3-4019-9d2f-4b38184519df.mp4",
+  "total_tracks": 4,
+  "video_tracks": 1,
+  "audio_tracks": 3,
+  "subtitle_tracks": 0,
+  "other_tracks": 0
+}
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see that the multi-audio container created in exercise 4 contains exactly 4 tracks: 1 video track and 3 audio tracks (AAC mono, AAC stereo, and AC3), confirming that exercise 4 successfully created a container with multiple audio tracks as intended.
+
+## Exercise 6
+
+For the sixth service we are implementing we need to create a video output that shows macroblocks and motion vectors. For it we are using FFmpeg's codecview filter with the `-flags2 +export_mvs` option to export motion vectors from the decoder.
+
+This service visualizes motion vectors (forward predicted MVs of P-frames, forward predicted MVs of B-frames, and backward predicted MVs of B-frames) and block partitioning structure (macroblocks) by overlaying them on the video frames.
+
+To run it we used curl in this way (using the same Big Buck Bunny file):
+
+```bash
+seminar2 git:(main) ✗ curl -X POST "http://localhost:8000/api/video/macroblocks-mv" \
+  -F "file=@big_buck_bunny.mp4" \
+  --output output_with_macroblocks.mp4
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 30.5M  100 25.3M  100 29.2M   1024k  11.3M   0:00:28  0:00:28 --:--:-- 11.8M
+➜  seminar2 git:(main) ✗
+```
+
+From this output we can see how the video has been processed to visualize macroblocks and motion vectors. The output video shows the internal structure of the video encoding, displaying motion vectors as arrows and macroblock boundaries, which is useful for understanding video compression and motion estimation algorithms.

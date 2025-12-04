@@ -13,6 +13,10 @@ services:
     depends_on:
       - video-resolution
       - video-chroma
+      - video-info
+      - video-audio
+      - video-tracks
+      - video-macroblocks
 
   # Exercise 1 - Video Resolution
   video-resolution:
@@ -29,6 +33,42 @@ services:
       context: ./services/video-chroma
       dockerfile: ../Dockerfile
     container_name: exercise2-video-chroma
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 3 - Video Info
+  video-info:
+    build:
+      context: ./services/video-info
+      dockerfile: ../Dockerfile
+    container_name: exercise3-video-info
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 4 - Video Audio
+  video-audio:
+    build:
+      context: ./services/video-audio
+      dockerfile: ../Dockerfile
+    container_name: exercise4-video-audio
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 5 - Video Tracks
+  video-tracks:
+    build:
+      context: ./services/video-tracks
+      dockerfile: ../Dockerfile
+    container_name: exercise5-video-tracks
+    volumes:
+      - ./shared:/app/shared
+
+  # Exercise 6 - Macroblocks and Motion Vectors
+  video-macroblocks:
+    build:
+      context: ./services/video-macroblocks
+      dockerfile: ../Dockerfile
+    container_name: exercise6-video-macroblocks
     volumes:
       - ./shared:/app/shared
 
