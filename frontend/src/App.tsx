@@ -2,6 +2,21 @@ import { useState } from "react";
 import "./App.css";
 
 const API_URL = "http://localhost:8000";
+const RESOLUTIONS = ["480p", "720p", "1080p"];
+
+interface LadderItem {
+  resolution: string;
+  width: number;
+  height: number;
+  file_size_mb: number;
+}
+
+interface Result {
+  success?: boolean;
+  message?: string;
+  codec?: string;
+  ladder?: LadderItem[];
+}
 
 function App() {
   const [file, setFile] = useState<File | null>(null);
@@ -9,32 +24,37 @@ function App() {
   const [mode, setMode] = useState<"convert" | "ladder">("convert");
   const [resolutions, setResolutions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success?: boolean;
-    message?: string;
-    codec?: string;
-    ladder?: Array<{
-      resolution: string;
-      width: number;
-      height: number;
-      file_size_mb: number;
-    }>;
-  } | null>(null);
+  const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+    setFile(e.target.files?.[0] || null);
   };
 
   const handleResolutionChange = (res: string) => {
-    setResolutions((prev) => {
-      if (prev.includes(res)) {
-        return prev.filter((r) => r !== res);
-      }
-      return [...prev, res];
-    });
+    setResolutions((prev) =>
+      prev.includes(res) ? prev.filter((r) => r !== res) : [...prev, res]
+    );
+  };
+
+  const downloadFile = (blob: Blob, filename: string) => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const getFilename = (response: Response, defaultName: string): string => {
+    const contentDisposition = response.headers.get("Content-Disposition");
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?(.+)"?/i);
+      if (match?.[1]) return match[1];
+    }
+    return defaultName;
   };
 
   const handleConvert = async () => {
@@ -57,33 +77,17 @@ function App() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Conversion failed: ${errorText}`);
+        throw new Error(`Conversion failed: ${await response.text()}`);
       }
 
-      // Get filename from Content-Disposition header if available
-      const contentDisposition = response.headers.get("Content-Disposition");
-      let filename = `converted_${codec}.${
-        codec === "vp8" || codec === "vp9" ? "webm" : "mp4"
-      }`;
-
-      if (contentDisposition) {
-        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
-        if (filenameMatch && filenameMatch[1]) {
-          filename = filenameMatch[1];
-        }
-      }
-
+      const filename = getFilename(
+        response,
+        `converted_${codec}.${
+          codec === "vp8" || codec === "vp9" ? "webm" : "mp4"
+        }`
+      );
       const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-
+      downloadFile(blob, filename);
       setResult({ success: true, message: "File downloaded!" });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -97,7 +101,6 @@ function App() {
       setError("Please select a file");
       return;
     }
-
     if (resolutions.length === 0) {
       setError("Please select at least one resolution");
       return;
@@ -122,8 +125,7 @@ function App() {
         throw new Error("Encoding ladder failed");
       }
 
-      const data = await response.json();
-      setResult(data);
+      setResult(await response.json());
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -178,7 +180,7 @@ function App() {
       {mode === "ladder" && (
         <div className="section">
           <h2>Resolutions</h2>
-          {["480p", "720p", "1080p"].map((res) => (
+          {RESOLUTIONS.map((res) => (
             <label key={res}>
               <input
                 type="checkbox"

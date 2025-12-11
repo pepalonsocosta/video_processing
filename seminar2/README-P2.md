@@ -154,3 +154,18 @@ npm start
 ```
 
 The application will be available at `http://localhost:5173`.
+
+# Ex 4
+
+For the 4th exercise we used the follwing prompt
+
+`look at the last 3 commits that were done on this branch and from that changes using the git command line.
+
+Try to improve and reduce lines of your code and add unit tests
+
+For the forntent part adapt the styles so it looks like fcb club fanboy page
+
+Make all the changes on this iteration
+`
+
+AI change lots of files and most of the improvements he did focused on refactoring code that was repeated.

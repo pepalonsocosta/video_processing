@@ -9,96 +9,29 @@ import os
 app = FastAPI(version="0.1.0")
 
 SHARED_DIR = "/app/shared"
+CODEC_CLASSES = {"av1": AV1, "h265": H265, "vp8": VP8, "vp9": VP9}
 
 class ConvertRequest(BaseModel):
     video_path: str
 
-@app.post("/process/av1")
-async def convert_av1(
-    request: ConvertRequest
-):
-    input_path = os.path.join(SHARED_DIR, request.video_path)
-    output_filename = f"converted_{request.video_path}"
-    output_path = os.path.join(SHARED_DIR, output_filename)
-    
-    
-    
-    try:
-        AV1.encode(input_path, output_path)
-        return {
-            "status": "success",
-            "output_path": output_filename
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error encoding video: {e}"
-        )
+def _get_output_filename(video_path: str, codec: str) -> str:
+    """Generate output filename based on codec requirements."""
+    if codec == "vp8":
+        base_name = os.path.splitext(video_path)[0]
+        return f"converted_{base_name}.webm"
+    return f"converted_{video_path}"
 
-@app.post("/process/h265")
-async def convert_h265(
-    request: ConvertRequest
-):
+@app.post("/process/{codec}")
+async def convert_video(codec: str, request: ConvertRequest):
+    if codec.lower() not in CODEC_CLASSES:
+        raise HTTPException(status_code=400, detail=f"Unsupported codec: {codec}")
+    
     input_path = os.path.join(SHARED_DIR, request.video_path)
-    output_filename = f"converted_{request.video_path}"
+    output_filename = _get_output_filename(request.video_path, codec.lower())
     output_path = os.path.join(SHARED_DIR, output_filename)
     
-    
-    
     try:
-        H265.encode(input_path, output_path)
-        return {
-            "status": "success",
-            "output_path": output_filename
-        }
+        CODEC_CLASSES[codec.lower()].encode(input_path, output_path)
+        return {"status": "success", "output_path": output_filename}
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error encoding video: {e}"
-        )
-
-@app.post("/process/vp8")
-async def convert_vp8(
-    request: ConvertRequest
-):
-    input_path = os.path.join(SHARED_DIR, request.video_path)
-    # VP8 must use .webm container, not .mp4
-    base_name = os.path.splitext(request.video_path)[0]
-    output_filename = f"converted_{base_name}.webm"
-    output_path = os.path.join(SHARED_DIR, output_filename)
-    
-    
-    
-    try:
-        VP8.encode(input_path, output_path)
-        return {
-            "status": "success",
-            "output_path": output_filename
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error encoding video: {e}"
-        )
-
-@app.post("/process/vp9")
-async def convert_vp9(
-    request: ConvertRequest
-):
-    input_path = os.path.join(SHARED_DIR, request.video_path)
-    output_filename = f"converted_{request.video_path}"
-    output_path = os.path.join(SHARED_DIR, output_filename)
-    
-    
-    
-    try:
-        VP9.encode(input_path, output_path)
-        return {
-            "status": "success",
-            "output_path": output_filename
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error encoding video: {e}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error encoding video: {e}")
