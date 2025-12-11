@@ -11,76 +11,85 @@ services:
       - ./shared:/app/shared
     # To ensure the API starts after the services it depends on are ready
     depends_on:
-      - video-resolution
-      - video-chroma
-      - video-info
-      - video-audio
-      - video-tracks
-      - video-macroblocks
-      - video-yuv-histogram
+      # - video-resolution
+      # - video-chroma
+      # - video-info
+      # - video-audio
+      # - video-tracks
+      # - video-macroblocks
+      # - video-yuv-histogram
+      - converter-p2
 
-  # Exercise 1 - Video Resolution
-  video-resolution:
+  converter-p2:
     build:
-      context: ./services/video-resolution
-      dockerfile: ../Dockerfile
-    container_name: exercise1-video-resolution
+      context: .
+      dockerfile: ./services/converter-p2/Dockerfile
+    container_name: converter-p2
     volumes:
       - ./shared:/app/shared
 
-  # Exercise 2 - Chroma Subsampling
-  video-chroma:
-    build:
-      context: ./services/video-chroma
-      dockerfile: ../Dockerfile
-    container_name: exercise2-video-chroma
-    volumes:
-      - ./shared:/app/shared
+    # # Exercise 1 - Video Resolution
+  # video-resolution:
+  #   build:
+  #     context: ./services/video-resolution
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise1-video-resolution
+  #   volumes:
+  #     - ./shared:/app/shared
 
-  # Exercise 3 - Video Info
-  video-info:
-    build:
-      context: ./services/video-info
-      dockerfile: ../Dockerfile
-    container_name: exercise3-video-info
-    volumes:
-      - ./shared:/app/shared
+  # # Exercise 2 - Chroma Subsampling
+  # video-chroma:
+  #   build:
+  #     context: ./services/video-chroma
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise2-video-chroma
+  #   volumes:
+  #     - ./shared:/app/shared
 
-  # Exercise 4 - Video Audio
-  video-audio:
-    build:
-      context: ./services/video-audio
-      dockerfile: ../Dockerfile
-    container_name: exercise4-video-audio
-    volumes:
-      - ./shared:/app/shared
+  # # Exercise 3 - Video Info
+  # video-info:
+  #   build:
+  #     context: ./services/video-info
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise3-video-info
+  #   volumes:
+  #     - ./shared:/app/shared
 
-  # Exercise 5 - Video Tracks
-  video-tracks:
-    build:
-      context: ./services/video-tracks
-      dockerfile: ../Dockerfile
-    container_name: exercise5-video-tracks
-    volumes:
-      - ./shared:/app/shared
+  # # Exercise 4 - Video Audio
+  # video-audio:
+  #   build:
+  #     context: ./services/video-audio
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise4-video-audio
+  #   volumes:
+  #     - ./shared:/app/shared
 
-  # Exercise 6 - Macroblocks and Motion Vectors
-  video-macroblocks:
-    build:
-      context: ./services/video-macroblocks
-      dockerfile: ../Dockerfile
-    container_name: exercise6-video-macroblocks
-    volumes:
-      - ./shared:/app/shared
+  # # Exercise 5 - Video Tracks
+  # video-tracks:
+  #   build:
+  #     context: ./services/video-tracks
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise5-video-tracks
+  #   volumes:
+  #     - ./shared:/app/shared
 
-  # Exercise 7 - YUV Histogram
-  video-yuv-histogram:
-    build:
-      context: ./services/video-yuv-histogram
-      dockerfile: ../Dockerfile
-    container_name: exercise7-video-yuv-histogram
-    volumes:
-      - ./shared:/app/shared
+  # # Exercise 6 - Macroblocks and Motion Vectors
+  # video-macroblocks:
+  #   build:
+  #     context: ./services/video-macroblocks
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise6-video-macroblocks
+  #   volumes:
+  #     - ./shared:/app/shared
+
+  # # Exercise 7 - YUV Histogram
+  # video-yuv-histogram:
+  #   build:
+  #     context: ./services/video-yuv-histogram
+  #     dockerfile: ../Dockerfile
+  #   container_name: exercise7-video-yuv-histogram
+  #   volumes:
+  #     - ./shared:/app/shared
 
 volumes:
   shared:
