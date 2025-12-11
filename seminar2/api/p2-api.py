@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
 import shutil
@@ -9,6 +10,13 @@ app = FastAPI(
     title="Seminar2 P2 API",
     description="API for S2 P2 endpoints",
     version="0.1.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Service URLs (from docker-compose)

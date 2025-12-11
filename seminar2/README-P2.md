@@ -127,3 +127,30 @@ We tried the api and got this results
 ```
 
 As can be seen above, the encoding ladder successfully generated multiple versions of the video at different resolutions. The response includes metadata for each generated file including resolution, dimensions, output path, and file size. This allows clients to select the appropriate quality level based on their needs.
+
+## Ex 3
+
+For the third exercise we created a web interface using Vite and React to provide a user-friendly GUI for our video processing API. The frontend allows users to upload videos, select codecs, and choose between single conversion or encoding ladder modes.
+
+We implemented calls to both API endpoints (`/api/video/convert/{codec}` and `/api/video/encoding-ladder`) that receive data from user selections in the web interface. The frontend sends the selected video file, codec choice, and resolution preferences to the backend, which processes the requests and returns the converted files or ladder metadata.
+
+To enable communication between the frontend (running on `http://localhost:5173`) and the backend API, we had to enable CORS (Cross-Origin Resource Sharing) in the FastAPI application. This allows the browser to make requests from the frontend origin to the API server.
+
+The web interface provides a simple form where users can:
+
+- Upload a video file
+- Select a codec (H265, AV1, VP8, VP9)
+- Choose between "Convert" mode (single file output) or "Encoding Ladder" mode (multiple resolutions)
+- Select resolutions for the encoding ladder (480p, 720p, 1080p)
+- Download the converted file(s) automatically after processing
+
+The implementation uses React hooks for state management and the Fetch API to communicate with the backend endpoints.
+
+To start the frontend, navigate to the frontend directory and run:
+
+```bash
+npm i
+npm start
+```
+
+The application will be available at `http://localhost:5173`.

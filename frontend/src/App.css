@@ -1,0 +1,91 @@
+.app {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.section {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.section h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+label {
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+label input[type="radio"],
+label input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.error {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8d7da;
+  color: #721c24;
+  border-radius: 5px;
+}
+
+.result {
+  margin: 20px 0;
+  padding: 15px;
+  background: #d4edda;
+  border-radius: 5px;
+}
+
+.result ul {
+  list-style: none;
+  padding: 0;
+}
+
+.result li {
+  padding: 8px;
+  margin: 5px 0;
+  background: white;
+  border-radius: 3px;
+}
