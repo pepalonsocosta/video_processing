@@ -82,3 +82,48 @@ As can be seen above the times and output size for each file were:
 - H265 | 0:16 (16 seconds) | 973 KB
 - VP8 | 0:07 (7 seconds) | 1301 KB
 - VP9 | 0:16 (16 seconds) | 1051 KB
+
+## Ex 2
+
+For the second exercise we implemented an encoding ladder feature that allows generating multiple versions of the same video at different resolutions. This is useful for adaptive streaming scenarios where different quality levels are needed based on network conditions or device capabilities.
+
+The implementation reuses the existing codec classes from Ex 1, extending them to accept optional width and height parameters for resolution scaling. We use FFmpeg's `-vf scale=WIDTH:HEIGHT` filter to resize the video while maintaining the same codec settings (CRF values) as in Ex 1.
+
+The encoding ladder service creates multiple encodings of the input video at specified resolutions. Supported resolutions are 480p (854x480), 720p (1280x720), and 1080p (1920x1080). The service internally calls the existing encode methods from the codec classes, passing the resolution parameters to generate the ladder.
+
+The implementation we used was to create a new service that handles encoding ladders in a docker container. The endpoint accepts the codec type, video file, and a comma-separated list of resolutions as form parameters:
+
+/api/video/encoding-ladder
+
+with codec options: av1, h265, vp8 and vp9, and resolution options: 480p, 720p, 1080p
+
+We tried the api and got this results
+
+```bash
+➜  seminar2 git:(04-p2-transcoding-and-final-work) ✗ curl -X POST "http://localhost:8000/api/video/encoding-ladder" \
+  -F "file=@big_buck_bunny.mp4" \
+  -F "codec=vp8" \
+  -F "resolutions=480p,720p"
+{
+  "status": "success",
+  "codec": "vp8",
+  "ladder": [
+    {
+      "resolution": "480p",
+      "width": 854,
+      "height": 480,
+      "output_path": "ladder_vp8_480p_70b1d853-4654-454d-aa4b-1efcdfe7bef3.webm",
+      "file_size_mb": 0.33
+    },
+    {
+      "resolution": "720p",
+      "width": 1280,
+      "height": 720,
+      "output_path": "ladder_vp8_720p_70b1d853-4654-454d-aa4b-1efcdfe7bef3.webm",
+      "file_size_mb": 0.51
+    }
+  ]
+}
+```
+
+As can be seen above, the encoding ladder successfully generated multiple versions of the video at different resolutions. The response includes metadata for each generated file including resolution, dimensions, output path, and file size. This allows clients to select the appropriate quality level based on their needs.

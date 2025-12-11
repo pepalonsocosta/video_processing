@@ -19,12 +19,21 @@ services:
       # - video-macroblocks
       # - video-yuv-histogram
       - converter-p2
+      - encoding-ladder
 
   converter-p2:
     build:
       context: .
       dockerfile: ./services/converter-p2/Dockerfile
     container_name: converter-p2
+    volumes:
+      - ./shared:/app/shared
+
+  encoding-ladder:
+    build:
+      context: .
+      dockerfile: ./services/encoding-ladder/Dockerfile
+    container_name: encoding-ladder
     volumes:
       - ./shared:/app/shared
 

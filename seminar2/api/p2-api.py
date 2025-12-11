@@ -13,6 +13,7 @@ app = FastAPI(
 
 # Service URLs (from docker-compose)
 CONVERTER_P2_URL = "http://converter-p2:8000"
+ENCODING_LADDER_URL = "http://encoding-ladder:8000"
 SHARED_DIR = "/app/shared"
 
 SUPPORTED_CODECS = {"av1", "h265", "vp8", "vp9"}
@@ -74,3 +75,54 @@ async def convert_video(
         if os.path.exists(input_path):
             os.remove(input_path)
         raise HTTPException(status_code=500, detail=f"Error processing video")
+
+@app.post("/api/video/encoding-ladder")
+async def encoding_ladder(
+    file: UploadFile = File(...),
+    codec: str = Form(...),
+    resolutions: str = Form(...)
+):
+    # Validate codec
+    if codec.lower() not in SUPPORTED_CODECS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported codec: {codec}. Supported codecs: {', '.join(SUPPORTED_CODECS)}"
+        )
+    
+    # Parse resolutions
+    resolutions_list = [r.strip() for r in resolutions.split(",")]
+    
+    # Get file extension and generate a unique filename
+    file_ext = os.path.splitext(file.filename)[1] if file.filename else ".mp4"
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    input_path = os.path.join(SHARED_DIR, unique_filename)
+
+    # Create shared directory if it doesn't exist
+    os.makedirs(SHARED_DIR, exist_ok=True)
+
+    # Save uploaded file to shared volume
+    try:
+        with open(input_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save file")
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{ENCODING_LADDER_URL}/process",
+                json={
+                    "video_path": unique_filename,
+                    "codec": codec.lower(),
+                    "resolutions": resolutions_list
+                },
+                timeout=600.0
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result
+                
+    except Exception as e:
+        if os.path.exists(input_path):
+            os.remove(input_path)
+        raise HTTPException(status_code=500, detail=f"Error creating encoding ladder")
