@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Copy project files
 COPY pyproject.toml ./
-COPY main.py ./
+COPY p2-api.py ./
 
 # Install dependencies
 RUN uv pip install --system --no-cache .
@@ -16,5 +16,5 @@ RUN uv pip install --system --no-cache .
 EXPOSE 8000
 
 # Run FastAPI
-CMD ["fastapi", "run", "main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["fastapi", "run", "p2-api.py", "--host", "0.0.0.0", "--port", "8000"]
 
