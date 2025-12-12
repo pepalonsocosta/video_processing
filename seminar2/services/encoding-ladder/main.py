@@ -74,7 +74,8 @@ async def create_encoding_ladder(
                 "width": width,
                 "height": height,
                 "output_path": output_filename,
-                "file_size_mb": file_size_mb
+                "file_size_mb": file_size_mb,
+                "download_url": f"http://localhost:8000/files/{output_filename}"
             })
         
         return {

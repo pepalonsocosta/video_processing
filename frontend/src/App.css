@@ -139,4 +139,36 @@ button:hover:not(:disabled) {
   border-radius: 5px;
   border-left: 4px solid #004d98;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ladder-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.ladder-info {
+  flex: 1;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #004d98 0%, #a50044 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 15px;
+  transition: transform 0.2s;
+}
+
+.download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

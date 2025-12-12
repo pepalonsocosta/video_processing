@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import httpx
 import os
 import shutil
@@ -12,6 +13,10 @@ app = FastAPI(
     version="0.1.0"
 )
 
+CONVERTER_P2_URL = "http://converter-p2:8000"
+ENCODING_LADDER_URL = "http://encoding-ladder:8000"
+SHARED_DIR = "/app/shared"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,9 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-CONVERTER_P2_URL = "http://converter-p2:8000"
-ENCODING_LADDER_URL = "http://encoding-ladder:8000"
-SHARED_DIR = "/app/shared"
+# Serve generated files statically
+app.mount("/files", StaticFiles(directory=SHARED_DIR), name="files")
 SUPPORTED_CODECS = {"av1", "h265", "vp8", "vp9"}
 
 def _save_uploaded_file(file: UploadFile) -> tuple[str, str]:
@@ -65,11 +69,11 @@ async def convert_video(codec: str, file: UploadFile = File(...)):
             if not os.path.exists(output_path):
                 raise HTTPException(status_code=500, detail="Output file not found")
             
-            return FileResponse(
-                path=output_path,
-                filename=result["output_path"],
-                media_type="video/mp4"
-            )
+                return FileResponse(
+                    path=output_path,
+                    filename=result["output_path"],
+                    media_type="video/mp4"
+                )
     except httpx.HTTPError:
         raise HTTPException(status_code=500, detail="Error processing video")
     finally:

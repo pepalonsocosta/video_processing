@@ -9,6 +9,7 @@ interface LadderItem {
   width: number;
   height: number;
   file_size_mb: number;
+  download_url?: string;
 }
 
 interface Result {
@@ -216,9 +217,19 @@ function App() {
               <p>Codec: {result.codec}</p>
               <ul>
                 {result.ladder.map((item, idx) => (
-                  <li key={idx}>
-                    {item.resolution} ({item.width}x{item.height}) -{" "}
-                    {item.file_size_mb} MB
+                  <li key={idx} className="ladder-item">
+                    <div className="ladder-info">
+                      {item.resolution} ({item.width}x{item.height}) -{" "}
+                      {item.file_size_mb} MB
+                    </div>
+                    {item.download_url && (
+                      <button
+                        className="download-btn"
+                        onClick={() => window.open(item.download_url, "_blank")}
+                      >
+                        Display
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
